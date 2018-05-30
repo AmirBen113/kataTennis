@@ -80,6 +80,78 @@ public class KataTest {
 		assertThat(match.getCurrentGame(), hasProperty("status", is("deuce")));
 	}
 
+	// test ex 3 (6 -1) (7-5) (0-0)
+	@Test
+	public void advantageShouldBeTheCurrentGameStatusAfterPlayer1ScoreOneMorePoint() {
+		// init test
+		initTest();
+		// game status : advantage
+		for (int i = 0; i <= 2 ; i++) 
+			match.getCurrentGame().scorePoint(player2);
+		
+		for (int i = 0; i <= 2 ; i++) 
+			match.getCurrentGame().scorePoint(player1);
+		
+		match.getCurrentGame().scorePoint(player1);
+		assertThat(match, hasProperty("score", is("(6-1) (7-5) (0-0)")));
+		assertThat(match, hasProperty("status", is(MatchStatus.IN_PROGRESS)));
+		assertThat(match.getCurrentGame(), hasProperty("status", is("advantage player 1")));
+	}
+
+	// test ex 4 (6 -1) (7-5) (6-0)
+	@Test
+	public void player1WinAfterThreeSet() {
+		// init test
+		initTest();
+		// third set (6-0)
+		for (int i = 0; i <= 5 ; i++) 
+			winNormalGame(player1);
+		
+		assertThat(match, hasProperty("score", is("(6-1) (7-5) (6-0)")));
+		assertThat(match, hasProperty("status", is(MatchStatus.PLAYER_1_WINS)));
+	}
+
+	// test ex 5 (6 -1) (7-5) (2-6) (6-7) (4-6)
+	@Test
+	public void Player2WinAfterFiveSet() {
+		// init test
+		initTest();
+		// third set (2-6)
+		for (int i = 0; i <= 1 ; i++) 
+			winNormalGame(player1);
+		
+		for (int i = 0; i <= 5 ; i++) 
+			winNormalGame(player2);
+		
+		// fourth set (6-7)
+		initializeForTieBreakGame();
+		
+		for (int i = 0; i <= 5 ; i++) 
+			match.getCurrentGame().scorePoint(player2);
+
+		for (int i = 0; i <= 2 ; i++) 
+			match.getCurrentGame().scorePoint(player1);
+		
+
+		match.getCurrentGame().scorePoint(player2);
+		// fifth set (4-6)
+		for (int i = 0; i <= 1 ; i++) 
+			winNormalGame(player2);
+		
+		winNormalGame(player1);
+		
+		for (int i = 0; i <= 1 ; i++) 
+			winNormalGame(player2);
+		
+		for (int i = 0; i <= 1 ; i++) 
+			winNormalGame(player1);
+		
+		winNormalGame(player2);
+		winNormalGame(player1);
+		winNormalGame(player2);
+		assertThat(match, hasProperty("score", is("(6-1) (7-5) (2-6) (6-7) (4-6)")));
+		assertThat(match, hasProperty("status", is(MatchStatus.PLAYER_2_WINS)));
+	}
 
 	// set score (6-1) (7-5)
 	public void initTest() {
